@@ -1,8 +1,7 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
-  {
-    path: '**',
-    renderMode: RenderMode.Prerender
-  }
+  // Session lives in the browser, so the member area can't be rendered ahead of time.
+  { path: 'dashboard', renderMode: RenderMode.Client },
+  { path: '**', renderMode: RenderMode.Prerender },
 ];

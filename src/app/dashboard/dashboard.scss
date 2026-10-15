@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  background: #0e0f12;
+  color: #f3f4f6;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+}
+
+.dashboard {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  color: #ff6a1a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  letter-spacing: -0.03em;
+}
+
+.logout {
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  background: transparent;
+  border: 1px solid #2c303a;
+  border-radius: 0.75rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #ff6a1a;
+  }
+}
+
+.placeholder {
+  margin-top: 2rem;
+  color: #9aa0ad;
+}

@@ -1,0 +1,209 @@
+// Global (ViewEncapsulation.None) but every selector is namespaced with `hs-`.
+app-hero-scene {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+.hs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0b0c0e;
+  pointer-events: none;
+}
+
+.hs-layer {
+  position: absolute;
+  inset: -4%; // headroom so parallax never reveals an edge
+  transition: transform 0.25s ease-out;
+}
+
+.hs-layer-bg {
+  transform: translate3d(calc(var(--px, 0) * -14px), calc(var(--py, 0) * -10px), 0);
+}
+
+.hs-layer-fighter {
+  transform: translate3d(calc(var(--px, 0) * 22px), calc(var(--py, 0) * 14px), 0);
+}
+
+// The gym photo covers the whole screen; focus on the fighter, not the empty wall.
+.hs-baki {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 25% 40%;
+  filter: saturate(1.08) contrast(1.05);
+  animation: hs-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes hs-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+// Darkens the photo so the login card and brand stay legible, with a warm gym-light glow.
+.hs-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 70% 30%, rgb(255 140 60 / 22%), transparent 55%),
+    linear-gradient(to top, rgb(8 9 11 / 85%), rgb(8 9 11 / 25%) 55%, rgb(8 9 11 / 55%)),
+    rgb(8 9 11 / 28%);
+}
+
+// Toji is a grey-background manga panel. `hard-light` treats 50% grey as neutral, so the grey
+// vanishes and only his ink and highlights blend into the gym photo; the masks feather the
+// edges and hide the "DISCIPLINE" caption at the top of the panel.
+// The blend mode lives on this transformed wrapper (not the <img>) so it blends against the
+// photo layers behind it instead of being isolated inside its own stacking context.
+.hs-layer-fighter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-right: 2%;
+  mix-blend-mode: hard-light;
+  opacity: 0.92;
+}
+
+.hs-toji {
+  display: block;
+  height: 88%;
+  width: auto;
+  max-width: none;
+  filter: contrast(1.12);
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 22%, #000 40%),
+    linear-gradient(to left, #000 62%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 22%, #000 40%),
+    linear-gradient(to left, #000 62%, transparent 100%);
+  mask-composite: intersect;
+}
+
+// Standing figure (left). His artwork already has a near-black, smoky backdrop that matches the
+// scene, so he needs no blend mode: a soft oval mask lets the smoke dissolve into the gym photo
+// and the red aura glows against the dark wall.
+.hs-layer-lifter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-left: 2%;
+  transform: translate3d(calc(var(--px, 0) * -18px), calc(var(--py, 0) * 12px), 0);
+  opacity: 0.96;
+}
+
+.hs-lifter {
+  display: block;
+  height: 90%;
+  width: auto;
+  max-width: none;
+  filter: brightness(1.05) contrast(1.06) saturate(1.05);
+  -webkit-mask-image: radial-gradient(ellipse 50% 54% at 50% 46%, #000 50%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 54% at 50% 46%, #000 50%, transparent 100%);
+}
+
+.hs-sparks {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hs-spark {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: #ffb070;
+  box-shadow: 0 0 8px 2px rgb(255 140 60 / 70%);
+  opacity: 0;
+  animation: hs-rise linear infinite;
+}
+
+@keyframes hs-rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(30px, -105vh, 0);
+    opacity: 0;
+  }
+}
+
+.hs-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgb(0 0 0 / 55%) 100%);
+}
+
+// Tablets and phones: the card sits below the fighters, so both stand above it, the standing
+// figure on the left and Toji on the right, and the photo is re-centred behind them.
+@media (max-width: 63.99rem) {
+  // Crop so the main face lands mid-screen, between the two fighters.
+  .hs-baki {
+    object-position: 66% 40%;
+  }
+
+  .hs-layer-fighter,
+  .hs-layer-lifter {
+    align-items: flex-start;
+    padding: 3.5rem 0 0;
+  }
+
+  .hs-layer-fighter {
+    justify-content: flex-end;
+    padding-right: 0;
+  }
+
+  .hs-layer-lifter {
+    justify-content: flex-start;
+    padding-left: 0;
+  }
+
+  .hs-lifter {
+    height: 46%;
+  }
+
+  .hs-toji {
+    height: 40%;
+    // Feather every edge so the panel's rectangle never shows against the photo.
+    -webkit-mask-image:
+      linear-gradient(to bottom, transparent 18%, #000 38%, #000 70%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to bottom, transparent 18%, #000 38%, #000 70%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%);
+    mask-composite: intersect;
+  }
+}
+
+// Phones: a narrower crop so the fighter's face stays visible beside the card.
+@media (max-width: 40rem) {
+  .hs-baki {
+    object-position: 60% 40%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-baki,
+  .hs-spark {
+    animation: none;
+  }
+
+  .hs-spark {
+    display: none;
+  }
+
+  .hs-layer {
+    transition: none;
+  }
+}
