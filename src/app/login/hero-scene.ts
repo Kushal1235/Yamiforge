@@ -75,18 +75,36 @@ export class HeroScene {
     renderer.appendChild(host, root);
 
     // Gentle parallax: the pointer position becomes two CSS variables the layers read.
-    const unlisten = renderer.listen('window', 'pointermove', (e: PointerEvent) => {
-      if (e.pointerType && e.pointerType !== 'mouse') {
-        return;
+    const setOffset = (x: number, y: number): void => {
+      renderer.setStyle(root, '--px', Math.max(-1, Math.min(1, x)).toFixed(3), RendererStyleFlags2.DashCase);
+      renderer.setStyle(root, '--py', Math.max(-1, Math.min(1, y)).toFixed(3), RendererStyleFlags2.DashCase);
+    };
+    const follow = (clientX: number, clientY: number): void =>
+      setOffset(
+        (clientX / window.innerWidth - 0.5) / PARALLAX_RANGE,
+        (clientY / window.innerHeight - 0.5) / PARALLAX_RANGE,
+      );
+
+    // Mouse on desktop; a finger touching or dragging on touch screens. (Phone tilt is left out:
+    // sensors report constantly and would fight the finger.)
+    const unlistenPointer = renderer.listen('window', 'pointermove', (e: PointerEvent) => {
+      if (!e.pointerType || e.pointerType === 'mouse') {
+        follow(e.clientX, e.clientY);
       }
-      const x = (e.clientX / window.innerWidth - 0.5) / PARALLAX_RANGE;
-      const y = (e.clientY / window.innerHeight - 0.5) / PARALLAX_RANGE;
-      renderer.setStyle(root, '--px', x.toFixed(3), RendererStyleFlags2.DashCase);
-      renderer.setStyle(root, '--py', y.toFixed(3), RendererStyleFlags2.DashCase);
     });
+    const onTouch = (e: TouchEvent): void => {
+      const touch = e.touches[0];
+      if (touch) {
+        follow(touch.clientX, touch.clientY);
+      }
+    };
+    const unlistenTouch = renderer.listen('window', 'touchmove', onTouch);
+    const unlistenTouchStart = renderer.listen('window', 'touchstart', onTouch);
 
     return () => {
-      unlisten();
+      unlistenPointer();
+      unlistenTouch();
+      unlistenTouchStart();
       renderer.removeChild(host, root);
     };
   }

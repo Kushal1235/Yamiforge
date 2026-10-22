@@ -6,18 +6,34 @@ export interface Member {
   name: string;
 }
 
-type Account = Member & { password: string };
+export type OtpMethod = 'email' | 'phone';
 
-export type RegisterResult = { ok: true; member: Member } | { ok: false; error: 'username-taken' };
+interface Account {
+  username: string;
+  phone: string; // digits only
+  email: string; // lower case
+}
+
+export type OtpRequestResult = { ok: true } | { ok: false; error: 'not-found' };
+export type RegisterResult =
+  | { ok: true }
+  | { ok: false; error: 'username-taken' | 'phone-taken' | 'email-taken' };
 
 const STORAGE_KEY = 'yamiforge.session';
 const ACCOUNTS_KEY = 'yamiforge.accounts';
 
+// No backend yet, so every code is this one. It is never shown on screen.
+const DEMO_OTP = '1234';
+
 // No backend yet: these accounts stand in for a real API call.
 const DEMO_ACCOUNTS: ReadonlyArray<Account> = [
-  { username: 'member', password: 'forge123', name: 'Alex' },
-  { username: 'coach', password: 'coach123', name: 'Coach Sam' },
+  { username: 'member', phone: '9876543210', email: 'member@yamiforge.com' },
+  { username: 'coach', phone: '9123456780', email: 'coach@yamiforge.com' },
 ];
+
+/** Keeps digits only, so "+91 98765-43210" and "9876543210" are the same number. */
+export const normalizePhone = (value: string): string => value.replace(/\D/g, '').slice(-10);
+export const normalizeEmail = (value: string): string => value.trim().toLowerCase();
 
 @Injectable({ providedIn: 'root' })
 export class Auth {
@@ -27,29 +43,49 @@ export class Auth {
   readonly member = this._member.asReadonly();
   readonly isLoggedIn = computed(() => this._member() !== null);
 
-  /** Resolves with the member on success, or null when the credentials are wrong. */
-  async login(username: string, password: string): Promise<Member | null> {
+  /** "Sends" a code to an existing account's email or phone. */
+  async requestOtp(method: OtpMethod, identifier: string): Promise<OtpRequestResult> {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    const account = this.accounts().find(
-      (a) => a.username === username.trim().toLowerCase() && a.password === password,
-    );
-    if (!account) {
+    return this.find(method, identifier) ? { ok: true } : { ok: false, error: 'not-found' };
+  }
+
+  /** Resolves with the member when the code is right, or null when it is not. */
+  async verifyOtp(method: OtpMethod, identifier: string, otp: string): Promise<Member | null> {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const account = this.find(method, identifier);
+    if (!account || otp.trim() !== DEMO_OTP) {
       return null;
     }
     return this.startSession(account);
   }
 
-  /** Creates an account and signs the new member in. */
-  async register(name: string, username: string, password: string): Promise<RegisterResult> {
+  /** Creates an account. The member then signs in with a code like everyone else. */
+  async register(username: string, phone: string, email: string): Promise<RegisterResult> {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const handle = username.trim().toLowerCase();
-    if (this.accounts().some((a) => a.username === handle)) {
+    const digits = normalizePhone(phone);
+    const mail = normalizeEmail(email);
+    const accounts = this.accounts();
+    if (accounts.some((a) => a.username === handle)) {
       return { ok: false, error: 'username-taken' };
     }
-    const account: Account = { username: handle, name: name.trim(), password };
-    // Demo only: a real backend must hash passwords and never store them in the browser.
+    if (accounts.some((a) => a.phone === digits)) {
+      return { ok: false, error: 'phone-taken' };
+    }
+    if (accounts.some((a) => a.email === mail)) {
+      return { ok: false, error: 'email-taken' };
+    }
+    const account: Account = { username: handle, phone: digits, email: mail };
     this.writeAccounts([...this.storedAccounts(), account]);
-    return { ok: true, member: this.startSession(account) };
+    return { ok: true };
+  }
+
+  private find(method: OtpMethod, identifier: string): Account | undefined {
+    return this.accounts().find((a) =>
+      method === 'email'
+        ? a.email === normalizeEmail(identifier)
+        : a.phone === normalizePhone(identifier),
+    );
   }
 
   logout(): void {
@@ -58,7 +94,7 @@ export class Auth {
   }
 
   private startSession(account: Account): Member {
-    const member: Member = { username: account.username, name: account.name };
+    const member: Member = { username: account.username, name: account.username };
     this._member.set(member);
     this.write(JSON.stringify(member));
     return member;

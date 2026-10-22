@@ -20,11 +20,11 @@ app-hero-scene {
 }
 
 .hs-layer-bg {
-  transform: translate3d(calc(var(--px, 0) * -14px), calc(var(--py, 0) * -10px), 0);
+  transform: translate3d(calc(var(--px, 0) * -14px * var(--amp, 1)), calc(var(--py, 0) * -10px * var(--amp, 1)), 0);
 }
 
 .hs-layer-fighter {
-  transform: translate3d(calc(var(--px, 0) * 22px), calc(var(--py, 0) * 14px), 0);
+  transform: translate3d(calc(var(--px, 0) * 22px * var(--amp, 1)), calc(var(--py, 0) * 14px * var(--amp, 1)), 0);
 }
 
 // The gym photo covers the whole screen; focus on the fighter, not the empty wall.
@@ -32,7 +32,7 @@ app-hero-scene {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 25% 40%;
+  object-position: 50% 40%;
   filter: saturate(1.08) contrast(1.05);
   animation: hs-drift 26s ease-in-out infinite alternate;
 }
@@ -94,7 +94,7 @@ app-hero-scene {
   align-items: flex-end;
   justify-content: flex-start;
   padding-left: 2%;
-  transform: translate3d(calc(var(--px, 0) * -18px), calc(var(--py, 0) * 12px), 0);
+  transform: translate3d(calc(var(--px, 0) * -18px * var(--amp, 1)), calc(var(--py, 0) * 12px * var(--amp, 1)), 0);
   opacity: 0.96;
 }
 
@@ -144,23 +144,43 @@ app-hero-scene {
   background: radial-gradient(ellipse at center, transparent 45%, rgb(0 0 0 / 55%) 100%);
 }
 
-// Tablets and phones: the card sits below the fighters, so both stand above it, the standing
-// figure on the left and Toji on the right, and the photo is re-centred behind them.
-@media (max-width: 63.99rem) {
-  // Crop so the main face lands mid-screen, between the two fighters.
+// Portrait screens of any width (phones, folded/unfolded foldables, portrait tablets): the photo is
+// centred on the main fighter and the two side fighters stand lower down, clear of the top
+// buttons. Landscape screens, however small, keep the wide cover layout above.
+@media (max-aspect-ratio: 1/1) {
+  // Zoomed out: the photo is only 70% of the screen height, centred on the face (56% across) and
+  // faded top and bottom into the dark backdrop.
   .hs-baki {
-    object-position: 66% 40%;
+    position: absolute;
+    top: 14%;
+    left: 50%;
+    width: auto;
+    height: 70%;
+    max-width: none;
+    object-fit: initial;
+    transform: translateX(-56%);
+    animation: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  }
+
+  // No parallax on touch screens: the layers stay put.
+  .hs {
+    --amp: 0;
   }
 
   .hs-layer-fighter,
   .hs-layer-lifter {
-    align-items: flex-start;
-    padding: 3.5rem 0 0;
+    align-items: flex-end;
+    padding: 0 0 clamp(5.5rem, 14vh, 8rem);
   }
 
+  // Toji (right) stands a little higher than the figure on the left.
   .hs-layer-fighter {
     justify-content: flex-end;
     padding-right: 0;
+    opacity: 1;
+    padding-bottom: clamp(8rem, 21vh, 12rem);
   }
 
   .hs-layer-lifter {
@@ -168,28 +188,38 @@ app-hero-scene {
     padding-left: 0;
   }
 
+  // Soft light on the lower half of Toji, whose body is darker than his pale shirt. It sits in the
+  // blended layer, so it lifts the dark parts without washing out the rest.
+  .hs-layer-fighter::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: clamp(8rem, 21vh, 12rem);
+    width: 60%;
+    height: 16%;
+    background: radial-gradient(ellipse at 50% 60%, rgb(255 200 150 / 55%), transparent 70%);
+    pointer-events: none;
+  }
+
   .hs-lifter {
-    height: 46%;
+    height: clamp(11rem, 34%, 22rem);
+    // The artwork has empty margin around the figure, so nudge it toward the corner, leaving a small gap.
+    margin-left: -1rem;
   }
 
   .hs-toji {
-    height: 40%;
+    height: clamp(10rem, 30%, 20rem);
+    margin-right: 1rem;
+    filter: brightness(1.15) contrast(1.15);
     // Feather every edge so the panel's rectangle never shows against the photo.
     -webkit-mask-image:
-      linear-gradient(to bottom, transparent 18%, #000 38%, #000 70%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%);
+      linear-gradient(to bottom, transparent 18%, #000 38%, #000 88%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 24%, #000 100%);
     -webkit-mask-composite: source-in;
     mask-image:
-      linear-gradient(to bottom, transparent 18%, #000 38%, #000 70%, transparent 100%),
-      linear-gradient(to right, transparent 0%, #000 24%, #000 76%, transparent 100%);
+      linear-gradient(to bottom, transparent 18%, #000 38%, #000 88%, transparent 100%),
+      linear-gradient(to right, transparent 0%, #000 24%, #000 100%);
     mask-composite: intersect;
-  }
-}
-
-// Phones: a narrower crop so the fighter's face stays visible beside the card.
-@media (max-width: 40rem) {
-  .hs-baki {
-    object-position: 60% 40%;
   }
 }
 

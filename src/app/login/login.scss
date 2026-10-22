@@ -120,7 +120,8 @@ button {
   font-style: italic;
 }
 
-@media (max-width: 63.99rem) {
+// Anything that is not a wide, landscape desktop-style screen.
+@media (max-width: 63.99rem), (max-aspect-ratio: 1/1) {
   .is-open .motto {
     display: none;
   }
@@ -198,6 +199,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
   min-height: 100vh;
   min-height: 100dvh;
   padding: 5rem 1rem 2rem;
@@ -207,6 +210,7 @@ button {
 // Glass card that drops into the centre of the artwork when Login or Register is clicked.
 .card {
   position: relative;
+  margin-block: auto; // pushes the header to the top and the footer to the bottom
   width: 100%;
   max-width: 26rem;
   padding: 1.75rem 1.25rem;
@@ -233,6 +237,7 @@ button {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  z-index: 2; // stays above the heading, which animates in as its own layer
   display: grid;
   place-items: center;
   width: 2.5rem;
@@ -272,6 +277,16 @@ button {
   border-radius: 0.75rem;
   background: color-mix(in srgb, var(--danger) 12%, transparent);
   color: var(--danger);
+  font-size: 0.9rem;
+}
+
+.notice {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid color-mix(in srgb, #4ade80 50%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, #4ade80 12%, transparent);
+  color: #86efac;
   font-size: 0.9rem;
 }
 
@@ -449,6 +464,294 @@ button {
   }
 }
 
+// Email / Phone switch above the sign-in field.
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  margin-bottom: 1.25rem;
+  padding: 0.25rem;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 0.875rem;
+
+  button {
+    min-height: 2.75rem;
+    background: none;
+    border: 0;
+    border-radius: 0.625rem;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+
+    &:hover {
+      color: var(--text);
+    }
+
+    &.on {
+      background: var(--accent);
+      color: #1a0b00;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  }
+}
+
+// Big, evenly spaced digits for the code.
+.field input.otp {
+  padding-left: 1.6em; // balances the trailing letter-spacing
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.6em;
+  text-align: center;
+}
+
+.lede strong {
+  color: var(--text);
+}
+
+.link:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+// "not a member yet" popup, shown above everything when an unknown email or phone tries to log in.
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(5 6 8 / 70%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: fade-only 0.2s ease both;
+}
+
+.modal {
+  width: 100%;
+  max-width: 24rem;
+  padding: 2rem 1.5rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: 0 30px 80px rgb(0 0 0 / 60%);
+  text-align: center;
+  animation: pop-in 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+
+  h2 {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0 0 1.5rem;
+    color: var(--muted);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  strong {
+    color: var(--text);
+  }
+}
+
+.modal-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.modal-actions {
+  display: grid;
+  gap: 0.625rem;
+}
+
+.modal-btn {
+  min-height: 3rem;
+  background: rgb(255 255 255 / 7%);
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 0.75rem;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(255 255 255 / 12%);
+  }
+
+  &.primary {
+    background: var(--accent);
+    border-color: transparent;
+    color: #1a0b00;
+
+    &:hover {
+      background: var(--accent-hover);
+    }
+  }
+
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--accent) 50%, white);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes fade-only {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.95);
+  }
+}
+
+// Header (dumbbell + heartbeat line) and footer (pills) above and below the form card. They show
+// while the form is open, on every screen size, and always on desktop.
+.panel-top,
+.panel-bottom {
+  display: none;
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+
+.is-open .panel-top {
+  display: flex;
+}
+
+// Phones and tablets show the pills inside the form card; desktop keeps them below the panel.
+.panel-chips.card-footer {
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.is-open .panel-bottom {
+  display: none;
+}
+.panel-top {
+  align-items: center;
+  gap: 0.75rem;
+  flex: none;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+.panel-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 0.75rem;
+  box-shadow: 0 0 22px rgb(255 106 26 / 30%);
+  color: var(--accent-hover);
+}
+
+// A heartbeat line that draws itself across, over and over.
+.panel-pulse {
+  flex: 1;
+  min-width: 0;
+  height: 2rem;
+  overflow: visible;
+
+  path {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: pulse-draw 3.2s ease-in-out infinite;
+  }
+}
+
+.panel-bottom {
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.panel-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    background: rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  i {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  li:nth-child(2) i {
+    background: #facc15;
+    box-shadow: 0 0 8px #facc15;
+  }
+
+  li:nth-child(3) i {
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+  }
+}
+
+.panel-rule {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 18%), transparent);
+}
+
+
+@keyframes pulse-draw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  55%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
 @keyframes drop-in {
   from {
     opacity: 0;
@@ -468,8 +771,16 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .card,
+  .card > *,
+  .modal,
+  .modal-backdrop {
+    animation: none !important;
+  }
+
+  .panel-pulse path {
     animation: none;
+    stroke-dashoffset: 0;
   }
 
   .nav-btn {
@@ -487,8 +798,21 @@ button {
   }
 }
 
-// Desktop: roomier card with the brand pinned top-left and the auth buttons top-right.
-@media (min-width: 64rem) {
+// Desktop: the artwork stays centred; opening Login/Register slides the artwork left and the
+// form in from the right as a docked side panel.
+@media (min-width: 64rem) and (min-aspect-ratio: 101/100) {
+  :host {
+    --panel-w: clamp(26rem, 32vw, 34rem);
+  }
+
+  .hero {
+    transition: right 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .is-open .hero {
+    right: var(--panel-w);
+  }
+
   .hero .brand {
     top: 3rem;
     left: 4rem;
@@ -501,15 +825,11 @@ button {
 
   .motto {
     left: 4rem;
-    right: auto;
+    right: 4rem;
     bottom: 3rem;
-    align-items: flex-start;
-    gap: 0.35rem;
-    text-align: left;
   }
 
   .motto-mark {
-    padding-left: 0;
     font-size: clamp(2.75rem, 4vw, 4rem);
   }
 
@@ -521,4 +841,266 @@ button {
     font-size: 1rem;
   }
 
+  .panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    display: flex;
+    width: var(--panel-w);
+    min-height: 0;
+    padding: 2rem;
+    overflow-y: auto;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -24px 0 60px rgb(0 0 0 / 45%);
+    transform: translateX(100%);
+    visibility: hidden;
+    pointer-events: auto;
+    transition:
+      transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 0.55s;
+  }
+
+  // A faint dot grid with a warm glow at the top and bottom edges, so the empty space has some life.
+  .panel-top,
+  .is-open .panel-bottom,
+  .panel-bottom {
+    display: flex;
+  }
+
+  .card-footer {
+    display: none;
+  }
+
+  .panel {
+    background:
+      radial-gradient(ellipse 80% 22% at 50% 0%, rgb(255 106 26 / 14%), transparent 75%),
+      radial-gradient(ellipse 80% 20% at 50% 100%, rgb(255 106 26 / 12%), transparent 75%),
+      radial-gradient(rgb(255 255 255 / 6%) 1px, transparent 1.5px) 0 0 / 22px 22px,
+      var(--surface);
+  }
+
+  .is-open .panel {
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .card {
+    margin: auto;
+    padding: 1rem 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 0;
+    box-shadow: none;
+    animation: none;
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff 55%, var(--accent-hover));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      // Shrink to the text so the underline below spans exactly the heading; the close button's
+      // clearance moves from padding to margin for the same reason.
+      width: fit-content;
+      max-width: calc(100% - 2.75rem);
+      padding-right: 0;
+    }
+
+    // Underline the full heading.
+    h1::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 4px;
+      margin-top: 0.6rem;
+      border-radius: 4px;
+      background: var(--accent);
+    }
+
+    // Everything inside slides in one after the other.
+    > * {
+      animation: rise-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    @for $i from 1 through 9 {
+      > :nth-child(#{$i}) {
+        animation-delay: #{0.12 + $i * 0.05}s;
+      }
+    }
+
+  }
+
+  .field input {
+    background: rgb(255 255 255 / 5%);
+    border-color: rgb(255 255 255 / 12%);
+
+    &:hover:not(:focus) {
+      border-color: rgb(255 255 255 / 26%);
+    }
+  }
+
+  .submit {
+    background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+    box-shadow: 0 10px 28px rgb(255 106 26 / 35%);
+    transition:
+      transform 0.15s,
+      box-shadow 0.2s,
+      filter 0.2s;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--accent-hover), var(--accent));
+      box-shadow: 0 14px 36px rgb(255 106 26 / 50%);
+      filter: brightness(1.06);
+      transform: translateY(-2px);
+    }
+  }
+
+  .close {
+    top: 0;
+    right: 0;
+    background: rgb(255 255 255 / 6%);
+
+    &:hover {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Short phones and tablets (not desktop): drop the decoration and tighten up so the form fits
+// without a scrollbar.
+@media (max-height: 46rem) and ((max-width: 63.99rem) or (max-aspect-ratio: 1/1)) {
+  .is-open .panel-top,
+  .card-footer {
+    display: none;
+  }
+
+  .panel {
+    padding-top: 4.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .card {
+    padding-block: 1.25rem;
+  }
+
+  .lede {
+    margin-bottom: 1rem;
+  }
+
+  .field {
+    margin-bottom: 0.875rem;
+  }
+}
+
+// Desktop windows that are not very tall: tighten the docked panel step by step so the form fits
+// without a scrollbar. The scrollbar itself is hidden; scrolling still works as a last resort.
+@media (min-width: 64rem) and (min-aspect-ratio: 101/100) {
+  .panel {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 64rem) and (min-aspect-ratio: 101/100) and (max-height: 56rem) {
+  .panel {
+    gap: 0.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .panel-top {
+    padding-bottom: 0.75rem;
+  }
+
+  .panel-bottom {
+    padding-top: 0.5rem;
+  }
+
+  .panel-rule {
+    margin-bottom: 0.5rem;
+  }
+
+  .card {
+    padding-block: 0.5rem;
+
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+
+  .lede {
+    margin-bottom: 1rem;
+  }
+
+  .field {
+    margin-bottom: 0.75rem;
+
+    input {
+      min-height: 2.75rem;
+    }
+  }
+
+  .submit {
+    min-height: 3rem;
+  }
+
+  .hint,
+  .switch {
+    margin-top: 0.375rem;
+  }
+}
+
+@media (min-width: 64rem) and (min-aspect-ratio: 101/100) and (max-height: 46rem) {
+  .panel-bottom,
+  .is-open .panel-bottom {
+    display: none;
+  }
+
+  .card h1 {
+    font-size: 1.6rem;
+  }
+
+  .field {
+    margin-bottom: 0.5rem;
+
+    label {
+      margin-bottom: 0.25rem;
+    }
+  }
+}
+
+@media (min-width: 64rem) and (min-aspect-ratio: 101/100) and (max-height: 38rem) {
+  .panel-top {
+    display: none;
+  }
 }
