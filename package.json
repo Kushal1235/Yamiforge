@@ -10,6 +10,9 @@
     "serve:ssr:YamiForge": "node dist/YamiForge/server/server.mjs"
   },
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "packageManager": "npm@11.10.0",
   "dependencies": {
     "@angular/common": "^22.2.0",
