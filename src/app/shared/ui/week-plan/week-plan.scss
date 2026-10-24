@@ -1,0 +1,115 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+// Phones: a compact list that fills the height it is given.
+ul {
+  display: grid;
+  gap: 0.5rem;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+
+  // Desktop: a row of seven day cards.
+  @media (min-width: 56rem) {
+    grid-template-rows: none;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
+li {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.6rem;
+  padding: 0 0.75rem;
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  animation: rise 0.45s calc(var(--i, 0) * 60ms) cubic-bezier(0.2, 0.9, 0.25, 1) both;
+
+  &.rest {
+    opacity: 0.6;
+  }
+
+  @media (min-width: 56rem) {
+    grid-template-columns: none;
+    grid-template-rows: auto 1fr auto;
+    padding: 1rem 0.75rem;
+    text-align: center;
+
+    &:not(.rest) {
+      border-top: 3px solid var(--accent);
+    }
+  }
+}
+
+.dow {
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.title {
+  font-size: 0.95rem;
+
+  @media (min-width: 56rem) {
+    align-self: center;
+  }
+}
+
+input {
+  min-width: 0;
+  min-height: 2.25rem;
+  padding: 0 0.6rem;
+  background: rgb(8 9 11 / 55%);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+
+  @media (min-width: 56rem) {
+    align-self: center;
+    text-align: center;
+  }
+
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--accent) 50%, white);
+    outline-offset: 2px;
+  }
+}
+
+.link {
+  min-height: 2.25rem;
+  padding: 0 0.4rem;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  li {
+    animation: none;
+  }
+}

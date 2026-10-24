@@ -1,4 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+/* Shared theme tokens; components read these instead of repeating the colours. */
+:root {
+  --bg: #0b0c0e;
+  --surface: rgb(14 15 18 / 62%);
+  --border: rgb(255 255 255 / 14%);
+  --text: #f3f4f6;
+  --muted: #b4b9c4;
+  --accent: #ff6a1a;
+  --accent-hover: #ff8340;
+  --accent-ink: #1a0b00;
+}
+
 html {
   color-scheme: dark;
   -webkit-text-size-adjust: 100%;
@@ -6,5 +17,5 @@ html {
 
 body {
   margin: 0;
-  background: #0e0f12;
+  background: var(--bg);
 }

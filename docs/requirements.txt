@@ -1,0 +1,274 @@
+
+YAMIFORGE
+Product Requirements & Build Plan
+Train. Track. Forge.
+A phased plan for an AI-assisted fitness and workout tracking application
+Working specification • Version 1.0 • October 2026
+
+1. Product Vision
+YamiForge is a modern, responsive fitness application that helps users choose a training goal, understand different training styles, build a suitable workout split, learn correct exercise technique, track completed workouts, and eventually create AI-assisted anime-themed workout artwork.
+Product principles
+Training categories, weekly splits, exercise instructions, workout prescriptions, and workout history must be distinct concepts.
+Make the first version useful without requiring an AI service or backend.
+Use a polished dark interface with restrained purple accents, clear typography, responsive layouts, and purposeful animations.
+Keep fitness data and recommendations understandable; do not present generated content as professional medical advice.
+Build incrementally with testable features and a stable release branch.
+2. Target Platforms and Technology
+Area
+Initial direction
+Frontend
+Angular standalone components; TypeScript; SCSS; responsive layouts.
+Rendering
+SSR was enabled when the Angular project was created. Decide page-by-page whether SSR is needed.
+State and data
+Begin with Angular services, signals, and RxJS where appropriate; introduce a larger state library only if complexity justifies it.
+Backend (later phase)
+Node.js + Express REST API.
+Database (later phase)
+Choose after defining user, workout, exercise, and progress data requirements.
+Authentication (later phase)
+Secure sign-in and authorization; evaluate session/JWT approach before implementation.
+Testing
+Unit/component tests and end-to-end checks; evaluate Jest compatibility with the selected Angular setup.
+CI/CD
+GitHub Actions for install, lint/build, tests, and deployment checks.
+AI integration (later phase)
+Image generation behind a backend service; never expose provider API keys in browser code.
+3. Core Training Concepts
+A training style describes the primary approach or objective. A workout split is the calendar-like method used to distribute training across the week. A split should not be presented as a separate training style.
+3.1 Comparing the core styles
+Workout Type
+Primary Resistance Source
+Main Benefit
+Ideal For...
+Strength Training
+Weights / Machines
+Pure force production
+Getting stronger, dense bones
+Bodybuilding
+Free weights / Cables
+Muscle size & symmetry
+Visual physique changes
+Calisthenics
+Gravity & Bodyweight
+Relative strength & control
+Athletic mastery of your body
+Powerlifting
+Heavy Barbells
+Maximum 1-rep lift power
+Mastering squat/bench/deadlift
+Olympic Lifting
+Barbells
+Explosive speed & power
+Athletes wanting quickness
+HIIT / Conditioning
+Mixed (Body/Weights)
+Cardio fitness & fat burn
+Cardiovascular endurance, stamina
+Functional / CrossFit
+Varied Tools
+Well-rounded readiness
+Overall physical fitness
+Pilates / Yoga
+Mat / Springs / Body
+Core strength & flexibility
+Joint longevity, posture, recovery
+3.2 Workout split options
+Split
+Common use
+Why users may choose it
+Push / Pull / Legs (PPL)
+Strength & bodybuilding
+Balances movement patterns and supports muscle growth.
+Upper / Lower
+Strength training
+Alternates upper and lower body and can allow frequent compound-lift practice.
+Partnered Muscle Groups
+Bodybuilding
+Pairs muscles, e.g. Chest/Triceps and Back/Biceps.
+Single Muscle Group / Bro Split
+Bodybuilding
+Focuses a session on one muscle group, e.g. chest, back, or legs.
+Arms / Upper-Body Focus
+Bodybuilding
+Adds emphasis to arms or upper-body appearance.
+3.3 Example setup flow
+Training category: Bodybuilding
+Goal: Muscle gain
+Workout split: Push / Pull / Legs
+Training frequency: 6 days per week
+Generate or configure a plan, with exercises, sets, reps, rest periods, and recovery days.
+4. Exercise Library
+The Exercise Library is a core feature. It explains how to perform each exercise and what it trains. It is separate from the workout plan and workout tracker.
+4.1 Exercise detail page
+Exercise name and demonstration: short video, animation, or sequence of images.
+Primary and secondary muscles, with a clear muscle map where available.
+Required equipment and difficulty level: beginner, intermediate, or advanced.
+Step-by-step technique instructions and breathing guidance.
+Common mistakes, safety notes, and exercise alternatives.
+Sets, reps, and rest should be prescribed by the workout plan rather than hard-coded into the exercise definition.
+Tracking controls should record the user's completed sets, reps, and load.
+4.2 Example: Barbell Bench Press
+Field
+Example content
+Target
+Chest
+Primary muscles
+Pectoralis major
+Secondary muscles
+Triceps and anterior deltoids
+Equipment
+Barbell and flat bench
+Difficulty
+Intermediate
+Technique
+Lie on the bench with eyes approximately beneath the bar; plant feet; stabilize upper back; use a comfortable grip; lower the bar under control toward the mid-to-lower chest; keep wrists stable; press upward smoothly.
+Common mistakes
+Bouncing the bar, excessive wrist bend, painful grip or elbow position, and lifting heavy without appropriate safety equipment.
+Safety
+Use a spotter or correctly positioned safety arms when benching alone. Stop if movement causes pain.
+4.3 Initial data model
+export interface Exercise {  id: string;  name: string;  category: string;  primaryMuscles: string[];  secondaryMuscles: string[];  equipment: string[];  difficulty: 'beginner' | 'intermediate' | 'advanced';  instructions: string[];  commonMistakes: string[];  mediaUrl?: string;}
+5. Workout Planning and Tracking
+5.1 Workout plan builder
+Let users select training style, goal, experience level, available equipment, weekly frequency, and preferred split.
+Allow users to view and adjust the proposed weekly schedule before saving.
+Support exercise ordering, sets, rep ranges, rest time, and optional notes.
+Include rest/recovery days and avoid implying every user should train six or seven days per week.
+Make generated plans editable and explain that plans are general fitness guidance, not medical advice.
+5.2 Workout tracker
+Mark exercises and individual sets as complete.
+Record load/weight, reps, completion status, and optional notes.
+Show workout duration and a history of completed sessions.
+Later provide progress charts, personal records, consistency indicators, and exercise history.
+5.3 Keep the concepts separate
+Feature
+Responsibility
+Exercise Library
+Explains how to perform an exercise and which muscles it targets.
+Workout Plan
+Specifies when an exercise is used and its sets, reps, and rest.
+Workout Tracker
+Records what the user actually completed.
+Progress Dashboard
+Summarizes history and progress over time.
+6. AI Anime Workout Poster Generator
+A planned differentiating feature: users can select a workout split and choose an anime character or upload a reference image, then create a themed workout poster. Character use and reference-image processing must respect the chosen image provider's policies and applicable rights.
+6.1 Proposed user flow
+Choose a workout split or a specific workout day.
+Choose a character/theme or upload a reference image.
+Select a visual style, color palette, and poster format.
+Generate the artwork.
+Render workout text—exercise names, sets, reps, and day title—in a separate UI/text layer for accuracy.
+Preview, regenerate, save, or share the finished poster.
+6.2 Possible modes
+Mode
+Description
+Priority
+Anime workout poster
+Character artwork alongside the workout split and exercise details.
+First AI visual feature
+Exercise demonstration artwork
+Character-inspired visual for an individual exercise; must not replace reliable technique guidance.
+Later phase
+Exercise media
+Use licensed/original demonstrations and muscle maps in the Exercise Library.
+Core feature; separate from AI posters
+Implementation note: generate or obtain artwork separately from the workout typography. Keep prompts, API credentials, moderation, and provider calls on the server side once the backend exists. Start with a mock poster flow if needed.
+7. UI/UX Requirements
+Modern, polished, anime-inspired visual identity; dark theme with restrained purple accents.
+Responsive layouts for mobile, tablet, and desktop.
+Clear navigation for Dashboard, Workout Plans, Exercise Library, Workout Tracking, Progress, and Settings.
+Useful loading, empty, error, and success states.
+Accessible contrast, keyboard focus, labels, and touch-friendly controls.
+Animations should be purposeful and lightweight, not distract from workout tasks.
+Keep poster text legible and editable independently of the generated artwork.
+8. Suggested Application Areas
+Area
+Initial responsibilities
+Dashboard
+Today's plan, quick-start workout, recent activity, and progress summary.
+Training Setup
+Goal, training style, experience, schedule, and split selection.
+Workout Plans
+Weekly calendar and editable workout-day details.
+Exercise Library
+Search/filter exercises and open technique detail pages.
+Active Workout
+Log sets, reps, load, rest, and completion.
+Progress
+Workout history and later charts/records.
+Anime Poster Studio
+Choose a split/theme, generate artwork, preview and save/share.
+Settings
+Profile and later preferences, units, and account controls.
+9. Architecture and Code Quality
+Use standalone Angular components and route-based lazy loading for major feature areas.
+Keep feature code organized by domain (dashboard, plans, exercises, tracking, progress, poster studio).
+Use reusable UI components and typed interfaces; keep data access separate from presentation.
+Begin with local/mock data and services; later replace implementations with API-backed services.
+Use environment configuration for non-secret settings; keep private API keys on the server.
+Add tests as each feature is implemented; check build, lint, and test results before merging.
+Decide which routes need SSR and ensure browser-only APIs are guarded where required.
+10. Git Workflow and Delivery
+Intended workflow: use main for active development and master as the stable release branch, as requested. Before changing branch names or merging, verify the repository's actual current branch and remote state.
+Create small, feature-focused commits.
+Run build and relevant tests locally.
+Open a pull request or review changes before promoting them to the stable branch.
+Use GitHub Actions to automate checks; only deploy after required checks pass.
+Document setup commands, environment variables, and release steps in the repository.
+11. Phased Implementation Roadmap
+Phase
+Scope
+Definition of done
+0 — Foundation
+Confirm requirements, navigation, design tokens, folder structure, and repository branches.
+App builds; baseline routes and responsive shell are in place.
+1 — UI shell
+Dashboard layout, navigation, theme, responsive behavior, reusable components.
+Core screens are navigable with polished loading/empty states.
+2 — Training setup
+Goals, training categories, split selection, weekly schedule using mock data.
+User can configure and view a sample plan.
+3 — Exercise Library
+Exercise list, search/filter, detail pages, instructions, muscles, equipment, media placeholders.
+User can find an exercise and understand its technique and target muscles.
+4 — Workout tracking
+Active workout, set logging, completion, history with local/mock persistence.
+User can complete a session and review recorded results.
+5 — Backend and accounts
+Express API, database selection, authentication, persistence, validation.
+Core plans and tracking data persist securely per user.
+6 — Progress and tests
+Progress summaries/charts, broader test coverage, CI checks.
+Quality gates run automatically and core flows are tested.
+7 — AI poster studio
+Theme/character selection, image generation integration, poster text overlay, save/share.
+A poster can be generated or mocked, previewed, and saved/shared.
+8 — Deployment
+Production configuration, CI/CD deployment, monitoring and documentation.
+Release can be deployed reproducibly with checks passing.
+12. Open Decisions
+Which database to use when the backend phase begins.
+Which authentication method and account providers to support.
+Whether the first release needs user profiles, cloud sync, and offline workout logging.
+Which image-generation provider to use, its cost limits, and whether uploaded reference images are stored or processed temporarily.
+Which exercise videos/animations and muscle-map assets can be licensed or created.
+Which units to support by default (kg/lb) and any localization requirements.
+Exact deployment target and domain.
+13. Acceptance Criteria for the First Useful Release
+Users can navigate a responsive YamiForge interface on mobile and desktop.
+Users can understand the difference between training styles and workout splits.
+Users can select a training goal and split and view an editable sample weekly plan.
+Users can browse an Exercise Library and open detailed exercise instructions.
+Users can log a basic workout and review a session history using mock/local data.
+The app builds successfully and has tests for its most important flows.
+AI image generation is optional and does not block core workout features.
+Appendix A — Example Feature Flow
+Dashboard → Set goal → Select Bodybuilding → Choose Muscle Gain → Select Push/Pull/Legs → Choose training frequency → Review weekly plan → Open Bench Press in Exercise Library → Review muscles and technique → Start workout → Log sets/reps/load → Finish session → Review history → Optionally create an anime-themed workout poster.
+Appendix B — Product Scope Guardrails
+Do not mix training style, split, individual exercise, and workout session into one data model.
+Do not rely on AI-generated text inside images for accurate exercise names, sets, or reps.
+Do not expose image provider credentials in Angular code.
+Do not use unlicensed media or assume every named character can be used without restrictions.
+Do not delay the core exercise library and tracker while implementing advanced AI features.

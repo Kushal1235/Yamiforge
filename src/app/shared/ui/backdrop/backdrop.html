@@ -1,0 +1,9 @@
+<!-- One-item loop: a new picture is a new element, so it fades in instead of snapping. -->
+@for (p of [picture()]; track p.src) {
+  <img
+    [src]="p.src"
+    [style.object-position]="p.position"
+    [class.whole]="p.whole"
+    alt=""
+  />
+}

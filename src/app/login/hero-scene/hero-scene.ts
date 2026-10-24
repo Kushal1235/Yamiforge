@@ -51,14 +51,14 @@ export class HeroScene {
 
     // Back to front: gym photo -> warm tint -> Toji (right) -> standing figure (left) -> sparks -> vignette.
     const bg = make('div', { class: 'hs-layer hs-layer-bg' }, root);
-    make('img', { class: 'hs-baki', src: 'images/baki.webp', alt: '', draggable: 'false', fetchpriority: 'high' }, bg);
+    make('img', { class: 'hs-baki', src: 'images/backgrounds/gym-baki.webp', alt: '', draggable: 'false', fetchpriority: 'high' }, bg);
     make('div', { class: 'hs-tint' }, root);
 
     const fighter = make('div', { class: 'hs-layer hs-layer-fighter' }, root);
-    make('img', { class: 'hs-toji', src: 'images/toji.jpg', alt: '', draggable: 'false' }, fighter);
+    make('img', { class: 'hs-toji', src: 'images/login/hero-toji.jpg', alt: '', draggable: 'false' }, fighter);
 
     const lifter = make('div', { class: 'hs-layer hs-layer-lifter' }, root);
-    make('img', { class: 'hs-lifter', src: 'images/standing.jpg', alt: '', draggable: 'false' }, lifter);
+    make('img', { class: 'hs-lifter', src: 'images/login/hero-standing.jpg', alt: '', draggable: 'false' }, lifter);
 
     const sparks = make('div', { class: 'hs-sparks' }, root);
     for (let i = 0; i < SPARK_COUNT; i++) {

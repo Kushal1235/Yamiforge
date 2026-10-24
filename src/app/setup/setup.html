@@ -1,0 +1,108 @@
+<app-backdrop [workout]="step() === 'category' ? null : categoryId()" />
+
+<main class="setup">
+  <header class="top">
+    <div class="brand"><span class="mark">Y</span><span class="name">YamiForge</span></div>
+    <app-progress-steps [count]="steps().length" [current]="stepIndex()" />
+    <div class="who">
+      <span class="hello">Hey, {{ member()?.name }}</span>
+      <button type="button" class="signout" (click)="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <section class="stage">
+    @switch (step()) {
+      @case ('category') {
+        <div class="heading">
+          <p class="eyebrow">What are we training today?</p>
+          <h1>Choose your <em>workout</em></h1>
+        </div>
+        <div class="grid cats" role="radiogroup" aria-label="Workout">
+          @for (c of categories; track c.id; let i = $index) {
+            <app-option-tile
+              [art]="c.id"
+              [title]="c.name"
+              [subtitle]="c.benefit"
+              [meta]="c.resistance"
+              [chip]="c.usesSplit ? 'Goal + split' : undefined"
+              [selected]="categoryId() === c.id"
+              [index]="i"
+              (picked)="pickCategory(c.id)"
+            />
+          }
+        </div>
+      }
+      @case ('goal') {
+        <div class="heading">
+          <p class="eyebrow">{{ category()?.name }}</p>
+          <h1>What's your <em>goal</em>?</h1>
+        </div>
+        <div class="grid goals" role="radiogroup" aria-label="Weight goal">
+          @for (g of goals; track g.id; let i = $index) {
+            <app-goal-card
+              [goal]="g"
+              [selected]="goalId() === g.id"
+              [index]="i"
+              (picked)="pickGoal(g.id)"
+            />
+          }
+        </div>
+      }
+      @case ('split') {
+        <div class="heading">
+          <p class="eyebrow">{{ category()?.name }} · {{ goalName() }}</p>
+          <h1>Pick your weekly <em>split</em></h1>
+        </div>
+        <div class="grid splits" role="radiogroup" aria-label="Workout split">
+          @for (s of orderedSplits(); track s.id; let i = $index) {
+            <app-split-card
+              [split]="s"
+              [recommended]="recommended(s)"
+              [selected]="splitId() === s.id"
+              [index]="i"
+              (picked)="pickSplit(s.id)"
+            />
+          }
+        </div>
+      }
+      @case ('review') {
+        <div class="heading">
+          <p class="eyebrow">
+            {{ category()?.name }}
+            @if (goalName(); as g) {
+              · {{ g }}
+            }
+            @if (splitName(); as name) {
+              · {{ name }}
+            }
+          </p>
+          <h1>Your suggested <em>week</em></h1>
+          <p class="lead">
+            {{ trainingDays() }} training days, the rest for recovery. Rename a day or swap it with
+            rest.
+          </p>
+        </div>
+        <app-week-plan
+          class="week"
+          [week]="week()"
+          [editable]="true"
+          (renamed)="rename($event)"
+          (restToggled)="toggleRest($event)"
+        />
+        <p class="note">General fitness guidance, not medical advice. Stop if anything hurts.</p>
+      }
+    }
+  </section>
+
+  <footer class="actions">
+    <button type="button" class="ghost" (click)="back()" [disabled]="stepIndex() === 0">Back</button>
+    @if (hasPlan()) {
+      <button type="button" class="keep" (click)="keepCurrent()">Keep my current plan</button>
+    }
+    @if (step() === 'review') {
+      <button type="button" class="primary" (click)="save()">Save plan</button>
+    } @else {
+      <span class="hint">Tap an option to continue</span>
+    }
+  </footer>
+</main>

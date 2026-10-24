@@ -1,0 +1,5 @@
+<ol aria-label="Progress">
+  @for (n of dots(); track n) {
+    <li [class.done]="n < current()" [class.current]="n === current()"></li>
+  }
+</ol>

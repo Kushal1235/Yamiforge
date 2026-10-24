@@ -1,10 +1,15 @@
-<main class="dashboard">
+<app-backdrop [workout]="workout()" />
+
+<div class="frame">
   <header>
-    <div>
-      <p class="eyebrow">Signed in</p>
-      <h1>Hey {{ member()?.name }}, let's train.</h1>
+    <div class="brand"><span class="mark">Y</span><span class="name">YamiForge</span></div>
+    <div class="who">
+      <span class="hello">Hey, {{ member()?.name }}</span>
+      <button type="button" class="logout" (click)="logout()">Sign out</button>
     </div>
-    <button type="button" class="logout" (click)="logout()">Sign out</button>
   </header>
-  <p class="placeholder">Your workouts, classes and progress will show up here.</p>
-</main>
+
+  <main>
+    <router-outlet />
+  </main>
+</div>

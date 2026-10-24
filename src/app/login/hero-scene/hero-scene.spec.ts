@@ -26,9 +26,9 @@ describe('HeroScene', () => {
   });
 
   it('uses the gym photo as the base with Toji and the standing figure in their own layers', () => {
-    expect(el.querySelector('img.hs-baki')!.getAttribute('src')).toBe('images/baki.webp');
-    expect(el.querySelector('.hs-layer-fighter img.hs-toji')!.getAttribute('src')).toBe('images/toji.jpg');
-    expect(el.querySelector('.hs-layer-lifter img.hs-lifter')!.getAttribute('src')).toBe('images/standing.jpg');
+    expect(el.querySelector('img.hs-baki')!.getAttribute('src')).toBe('images/backgrounds/gym-baki.webp');
+    expect(el.querySelector('.hs-layer-fighter img.hs-toji')!.getAttribute('src')).toBe('images/login/hero-toji.jpg');
+    expect(el.querySelector('.hs-layer-lifter img.hs-lifter')!.getAttribute('src')).toBe('images/login/hero-standing.jpg');
     // DOM order is paint order: the photo layer must come before both fighter layers.
     const order = Array.from(root().children).map((c) => c.className);
     const at = (cls: string) => order.findIndex((c) => c.includes(cls));

@@ -1,0 +1,21 @@
+<ul>
+  @for (d of week(); track d.day; let i = $index) {
+    <li [class.rest]="d.rest" [style.--i]="i">
+      <span class="dow">{{ d.day }}</span>
+      @if (editable()) {
+        <input
+          type="text"
+          [value]="d.title"
+          [disabled]="d.rest"
+          (input)="renamed.emit({ index: i, title: $any($event.target).value })"
+          [attr.aria-label]="d.day + ' session name'"
+        />
+        <button type="button" class="link" (click)="restToggled.emit(i)">
+          {{ d.rest ? 'Add workout' : 'Make rest' }}
+        </button>
+      } @else {
+        <span class="title">{{ d.title }}</span>
+      }
+    </li>
+  }
+</ul>

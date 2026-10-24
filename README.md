@@ -57,3 +57,15 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Images
+
+All pictures live in `public/images/`, in folders by where they are used:
+
+| Folder | What is in it |
+| --- | --- |
+| `workouts/` | One picture per workout style, named after its id (`strength.png`, `bodybuilding.avif`, `calisthenics.jpg`, `powerlifting.jpg`, `hiit-crossfit.png`). |
+| `backgrounds/` | Full-screen scenes, e.g. `gym-baki.webp` (default background and the sign-in artwork). |
+| `login/` | Layers of the sign-in hero scene (`hero-toji.jpg`, `hero-standing.jpg`). |
+
+To change a workout picture, replace its file and update the path and crop in `src/app/shared/ui/workout-photos.ts`.

@@ -1,0 +1,30 @@
+<button
+  type="button"
+  class="card"
+  role="radio"
+  [attr.aria-checked]="selected()"
+  [class.selected]="selected()"
+  (click)="picked.emit()"
+>
+  <!-- Drawn icon on a see-through card, so the picture behind the page stays visible. -->
+  <svg class="icon" viewBox="-100 -100 200 200" aria-hidden="true">
+    @switch (goal().id) {
+      @case ('lose-weight') {
+        <g fill="#ff7a1a">
+          <path d="M0 -92C10 -52 58 -40 58 14A58 58 0 0 1 -58 14C-58 -14 -38 -24 -30 -52C-12 -38 -4 -62 0 -92Z" />
+          <path d="M0 -20C6 0 28 6 28 32A28 28 0 0 1 -28 32C-28 18 -14 12 0 -20Z" fill="#fff" fill-opacity="0.35" />
+        </g>
+      }
+      @case ('gain-weight') {
+        <g fill="#c6ff3d">
+          <rect x="-70" y="40" width="140" height="20" rx="6" />
+          <rect x="-56" y="12" width="112" height="20" rx="6" opacity="0.8" />
+          <rect x="-42" y="-16" width="84" height="20" rx="6" opacity="0.6" />
+        </g>
+        <path d="M0 -92V-30M-26 -64L0 -92L26 -64" fill="none" stroke="#c6ff3d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+      }
+    }
+  </svg>
+  <strong>{{ goal().name }}</strong>
+  <span class="blurb">{{ goal().blurb }}</span>
+</button>

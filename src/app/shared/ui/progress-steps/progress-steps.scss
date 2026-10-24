@@ -1,0 +1,26 @@
+ol {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  width: 1.5rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 22%);
+  transition:
+    background 0.25s,
+    width 0.25s;
+
+  &.done {
+    background: rgb(255 106 26 / 55%);
+  }
+
+  &.current {
+    width: 2.5rem;
+    background: var(--accent);
+  }
+}

@@ -1,0 +1,39 @@
+@if (summary(); as plan) {
+  <article class="plan">
+    <section class="hero">
+      <app-workout-art [kind]="plan.category.id" />
+      <div class="hero-text">
+        <p class="eyebrow">{{ plan.category.name }}</p>
+        <h2>{{ headline() }}</h2>
+        <p class="summary">{{ blurb() }}</p>
+        <ul class="tags">
+          @if (plan.goal; as goal) {
+            <li>{{ goal.name }}</li>
+          }
+          @if (plan.split; as split) {
+            <li>{{ split.name }}</li>
+          }
+          <li>{{ plan.days }} days a week</li>
+        </ul>
+        <a routerLink="/setup" class="change">Change workout</a>
+      </div>
+    </section>
+
+    <section class="principles" aria-label="How this plan works">
+      <h3>How it works</h3>
+      <ol>
+        @for (item of principles(); track item) {
+          <li>{{ item }}</li>
+        }
+      </ol>
+      <ng-content />
+    </section>
+
+    <section class="week" aria-label="Your week">
+      <h3>Your week</h3>
+      <app-week-plan [week]="plan.week" />
+    </section>
+
+    <p class="note">General fitness guidance, not medical advice. Stop if anything hurts.</p>
+  </article>
+}

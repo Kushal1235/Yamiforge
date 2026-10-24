@@ -1,0 +1,54 @@
+@if (photo(); as photo) {
+  <img
+    class="photo"
+    [src]="photo.src"
+    [style.object-position]="photo.position"
+    alt=""
+  />
+}
+<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient [attr.id]="'bg-' + kind()" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" [attr.stop-color]="palette().bg" />
+      <stop offset="1" [attr.stop-color]="palette().bg2" />
+    </linearGradient>
+    <radialGradient [attr.id]="'glow-' + kind()" cx="0.7" cy="0.4" r="0.6">
+      <stop offset="0" [attr.stop-color]="palette().glow" stop-opacity="0.55" />
+      <stop offset="1" [attr.stop-color]="palette().glow" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  @if (!photo()) {
+    <rect width="400" height="240" [attr.fill]="'url(#bg-' + kind() + ')'" />
+    <rect width="400" height="240" [attr.fill]="'url(#glow-' + kind() + ')'" />
+    <g class="grid" [attr.stroke]="palette().glow" stroke-opacity="0.08">
+      @for (x of lines; track x) {
+        <path [attr.d]="'M' + x + ' 0V240'" />
+      }
+    </g>
+  }
+  @if (!photo()) {
+    <g [attr.fill]="palette().glow" [attr.stroke]="palette().glow" transform="translate(205 120)">
+      @switch (kind()) {
+        @case ('strength') {
+          <g stroke="none"><rect x="-130" y="-5" width="260" height="10" rx="5" fill="#d9deef" />
+            <rect x="-92" y="-52" width="22" height="104" rx="6" /><rect x="-64" y="-38" width="16" height="76" rx="5" opacity="0.75" />
+            <rect x="70" y="-52" width="22" height="104" rx="6" /><rect x="48" y="-38" width="16" height="76" rx="5" opacity="0.75" /></g>
+        }
+        @case ('powerlifting') {
+          <g stroke="none"><rect x="-140" y="-5" width="280" height="10" rx="5" fill="#f1d9d9" />
+            <rect x="-104" y="-66" width="20" height="132" rx="6" /><rect x="-80" y="-56" width="18" height="112" rx="6" opacity="0.8" />
+            <rect x="-58" y="-44" width="14" height="88" rx="5" opacity="0.6" />
+            <rect x="84" y="-66" width="20" height="132" rx="6" /><rect x="62" y="-56" width="18" height="112" rx="6" opacity="0.8" />
+            <rect x="44" y="-44" width="14" height="88" rx="5" opacity="0.6" /></g>
+        }
+        @case ('hiit-crossfit') {
+          <path d="M18 -90L-50 14H-4L-22 92L52 -20H6Z" stroke="none" />
+          <path d="M-120 -40H-80M-130 0H-70M-120 40H-80" stroke-width="6" stroke-linecap="round" opacity="0.5" />
+        }
+        @default {
+          <circle r="60" stroke="none" opacity="0.6" />
+        }
+      }
+    </g>
+  }
+</svg>

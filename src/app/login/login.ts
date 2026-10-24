@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth, OtpMethod, normalizePhone } from '../auth/auth';
-import { HeroScene } from './hero-scene';
+import { HeroScene } from './hero-scene/hero-scene';
 
 type Mode = 'login' | 'register';
 type Step = 'identify' | 'otp';

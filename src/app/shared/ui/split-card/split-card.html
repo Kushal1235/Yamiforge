@@ -1,0 +1,22 @@
+<button
+  type="button"
+  class="panel"
+  role="radio"
+  [attr.aria-checked]="selected()"
+  [class.selected]="selected()"
+  (click)="picked.emit()"
+>
+  <span class="head">
+    <strong>{{ split().name }}</strong>
+    @if (recommended()) {
+      <span class="badge">Recommended</span>
+    }
+  </span>
+  <span class="muted">{{ split().why }}</span>
+  <span class="pills">
+    @for (session of split().sessions; track session) {
+      <span>{{ session }}</span>
+    }
+  </span>
+  <span class="days">{{ split().days }} days a week</span>
+</button>
