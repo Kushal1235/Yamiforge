@@ -82,7 +82,7 @@
             @if (step() === 'identify') {
               Choose how you want to receive your one-time code.
             } @else {
-              We sent a 4-digit code to <strong>{{ maskedIdentifier() }}</strong>.
+              We sent a 6-digit code to <strong>{{ maskedIdentifier() }}</strong>.
             }
           </p>
 
@@ -157,13 +157,13 @@
                 formControlName="otp"
                 inputmode="numeric"
                 autocomplete="one-time-code"
-                maxlength="4"
-                placeholder="••••"
+                maxlength="6"
+                placeholder="••••••"
                 [attr.aria-invalid]="showLoginError('otp')"
                 [attr.aria-describedby]="showLoginError('otp') ? 'login-otp-error' : null"
               />
               @if (showLoginError('otp')) {
-                <p class="error" id="login-otp-error">Enter the 4-digit code.</p>
+                <p class="error" id="login-otp-error">Enter the 6-digit code.</p>
               }
             </div>
 

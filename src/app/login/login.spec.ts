@@ -1,3 +1,4 @@
+import { provideFakeAuth } from '../testing/fake-auth-api';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { Login } from './login';
@@ -15,7 +16,7 @@ describe('Login', () => {
     field.value = value;
     field.dispatchEvent(new Event('input'));
   };
-  // The Auth calls wait half a second like a real API, so the clock is faked and moved on.
+  // The clock is faked so any timers the form sets are flushed along with the (instant) fake API.
   const submit = async () => {
     el.querySelector('form')!.dispatchEvent(new Event('submit'));
     await vi.advanceTimersByTimeAsync(600);
@@ -43,7 +44,7 @@ describe('Login', () => {
     localStorage.clear();
     await TestBed.configureTestingModule({
       imports: [Login],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), ...provideFakeAuth()],
     }).compileComponents();
 
     auth = TestBed.inject(Auth);
@@ -166,6 +167,15 @@ describe('Login', () => {
       expect(el.querySelector('#login-otp')).toBeNull();
     });
 
+    it('says the server is unreachable instead of calling the email unregistered', async () => {
+      vi.spyOn(auth, 'requestOtp').mockResolvedValue({ ok: false, error: 'unavailable' });
+      type('login-identifier', 'member@yamiforge.com');
+      await submit();
+
+      expect(el.querySelector('[role="alertdialog"]')).toBeNull();
+      expect(el.querySelector('[role="alert"]')?.textContent).toContain('could not reach the server');
+    });
+
     it('closes the popup with Try again, keeping the form', async () => {
       choose('Phone');
       type('login-identifier', '9000000099');
@@ -201,14 +211,14 @@ describe('Login', () => {
 
       expect(input('login-otp')).toBeTruthy();
       expect(el.querySelector('.lede')!.textContent).toContain('me••••@yamiforge.com');
-      expect(el.textContent).not.toContain('1234');
+      expect(el.textContent).not.toContain('123456');
     });
 
     it('signs in with the right code and goes to the dashboard', async () => {
       choose('Phone');
       type('login-identifier', '9876543210');
       await submit();
-      type('login-otp', '1234');
+      type('login-otp', '123456');
       await submit();
 
       expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');
@@ -218,7 +228,7 @@ describe('Login', () => {
     it('rejects a wrong code, shows an error and clears the field', async () => {
       type('login-identifier', 'member@yamiforge.com');
       await submit();
-      type('login-otp', '9999');
+      type('login-otp', '999999');
       await submit();
 
       expect(router.navigateByUrl).not.toHaveBeenCalled();
@@ -283,7 +293,7 @@ describe('Login', () => {
       fill('sam99', '9000000001', 'sam@example.com');
       await submit();
       await submit();
-      type('login-otp', '1234');
+      type('login-otp', '123456');
       await submit();
 
       expect(router.navigateByUrl).toHaveBeenCalledWith('/dashboard');

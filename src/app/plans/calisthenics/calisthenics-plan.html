@@ -1,1 +1,106 @@
-<app-plan-shell [headline]="headline" [blurb]="blurb" [principles]="principles" />
+<app-plan-shell [headline]="headline" [blurb]="blurb" [principles]="principles">
+  <section afterWeek class="program" aria-label="Calisthenics levels and workouts">
+    <h3>Choose your level</h3>
+    <ul class="levels">
+      @for (l of levels; track l.id) {
+        @let open = progress.unlocked().has(l.id);
+        <li>
+          <button
+            type="button"
+            class="level"
+            [class.active]="l.id === level().id"
+            [disabled]="!open"
+            [attr.aria-pressed]="l.id === level().id"
+            (click)="selectLevel(l.id)"
+          >
+            <span class="level-name">{{ l.name }}</span>
+            <span class="level-tag">{{ l.tagline }}</span>
+            <span class="level-state">{{ open ? 'Unlocked' : 'Locked · ' + requirement(l.id) }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+
+    <p class="goal">{{ level().goal }}</p>
+
+    <div class="days" role="tablist" aria-label="Day of the week">
+      @for (d of level().week; track d.day; let i = $index) {
+        <button
+          type="button"
+          role="tab"
+          class="day"
+          [class.rest]="d.exercises.length === 0"
+          [class.active]="i === dayIndex()"
+          [attr.aria-selected]="i === dayIndex()"
+          (click)="dayIndex.set(i)"
+        >
+          <span class="dow">{{ d.day }}</span>
+          <span class="day-title">{{ d.title }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="workout" role="tabpanel">
+      <header>
+        <h4>{{ day().day }} · {{ day().title }}</h4>
+        <p>{{ day().focus }}</p>
+      </header>
+
+      @if (day().exercises.length) {
+        <ol class="exercises">
+          @for (e of day().exercises; track e.name) {
+            <li>
+              <div class="ex-head">
+                <span class="ex-name">{{ e.name }}</span>
+                <span class="ex-dose">{{ e.dose }}</span>
+              </div>
+              <p class="ex-muscles">{{ e.muscles }}</p>
+              <p class="ex-cue">{{ e.cue }}</p>
+            </li>
+          }
+        </ol>
+        <button type="button" class="log" (click)="progress.logSession(level().id)">
+          Log this session complete
+        </button>
+        <p class="logged">{{ sessions()[level().id] }} {{ level().name }} sessions logged</p>
+      } @else {
+        <p class="rest-note">Recovery day. Rest, walk and keep mobility gentle. Progress happens while you recover.</p>
+      }
+    </div>
+
+    @let g = gate();
+    @if (g) {
+      <div class="unlock">
+        <h4>Unlock {{ nextLevel()?.name }}</h4>
+        <p>
+          Log {{ g.rule.sessions }} {{ g.from.name }} sessions and pass every readiness check. Time alone never
+          unlocks a level.
+        </p>
+        <div
+          class="meter"
+          role="progressbar"
+          [attr.aria-valuenow]="gateDone()"
+          aria-valuemin="0"
+          [attr.aria-valuemax]="g.rule.sessions"
+        >
+          <span [style.width.%]="(gateDone() / g.rule.sessions) * 100"></span>
+        </div>
+        <p class="meter-label">{{ gateDone() }} of {{ g.rule.sessions }} sessions completed</p>
+        <ul class="checks">
+          @for (c of g.rule.checks; track c; let i = $index) {
+            <li>
+              <label>
+                <input type="checkbox" [checked]="isChecked(g.from.id, i)" (change)="progress.toggleCheck(g.from.id, i)" />
+                {{ c }}
+              </label>
+            </li>
+          }
+        </ul>
+        <p class="fine">
+          These are suggested app defaults, not a medical standard. If you cannot pass a check yet, keep training and
+          try again later. Scaling an exercise never costs you progress.
+        </p>
+      </div>
+    }
+  </section>
+</app-plan-shell>

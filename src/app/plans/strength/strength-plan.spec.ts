@@ -1,3 +1,4 @@
+import { provideFakeAuth } from '../../testing/fake-auth-api';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signInWithPlan } from '../../testing/test-helpers';
@@ -6,7 +7,7 @@ import { StrengthPlan } from './strength-plan';
 describe('StrengthPlan', () => {
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideFakeAuth()] });
   });
   afterEach(() => localStorage.clear());
 

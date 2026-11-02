@@ -34,6 +34,8 @@
       <app-week-plan [week]="plan.week" />
     </section>
 
+    <ng-content select="[afterWeek]" />
+
     <p class="note">General fitness guidance, not medical advice. Stop if anything hurts.</p>
   </article>
 }

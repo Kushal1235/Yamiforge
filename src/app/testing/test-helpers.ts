@@ -15,7 +15,7 @@ export const SAMPLE_WEEK: PlanDay[] = [
 
 /** Signs in as the demo member and saves a plan for the given workout style. */
 export async function signInWithPlan(categoryId: string): Promise<void> {
-  await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '1234');
+  await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '123456');
   TestBed.inject(TrainingSetupStore).save({
     categoryId,
     goalId: null,

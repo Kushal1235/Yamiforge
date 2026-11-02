@@ -1,11 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { Auth } from '../auth/auth';
+import { provideFakeAuth } from '../testing/fake-auth-api';
 import { TrainingSetupStore } from '../training/training-setup';
 import { ownPlanGuard, planRedirectGuard } from './plan.guards';
 
 describe('plan guards', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    TestBed.configureTestingModule({ providers: provideFakeAuth() });
+  });
   afterEach(() => localStorage.clear());
 
   const run = (guard: CanActivateFn) =>
@@ -13,7 +17,7 @@ describe('plan guards', () => {
   const path = (result: unknown) => TestBed.inject(Router).serializeUrl(result as UrlTree);
 
   async function signInWithPlan(categoryId?: string): Promise<void> {
-    await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '1234');
+    await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '123456');
     if (categoryId) {
       TestBed.inject(TrainingSetupStore).save({
         categoryId,

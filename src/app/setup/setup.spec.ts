@@ -1,3 +1,4 @@
+import { provideFakeAuth } from '../testing/fake-auth-api';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { Auth } from '../auth/auth';
@@ -7,8 +8,8 @@ import { Setup } from './setup';
 describe('Setup', () => {
   beforeEach(async () => {
     localStorage.clear();
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
-    await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '1234');
+    TestBed.configureTestingModule({ providers: [provideRouter([]), ...provideFakeAuth()] });
+    await TestBed.inject(Auth).verifyOtp('email', 'member@yamiforge.com', '123456');
   });
   afterEach(() => localStorage.clear());
 

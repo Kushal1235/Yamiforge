@@ -20,6 +20,8 @@ import { HeroScene } from './hero-scene/hero-scene';
 type Mode = 'login' | 'register';
 type Step = 'identify' | 'otp';
 
+const SERVER_DOWN = 'We could not reach the server. Please try again in a moment.';
+
 const PHONE_LENGTH = 10;
 
 const phoneValidator = (control: AbstractControl): ValidationErrors | null =>
@@ -51,7 +53,7 @@ export class Login {
           this.method() === 'email' ? Validators.email(c) : phoneValidator(c),
       ],
     ],
-    otp: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
+    otp: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
   });
 
   protected readonly registerForm = this.fb.group({
@@ -143,9 +145,11 @@ export class Login {
     if (result.ok) {
       this.step.set('otp');
       this.focusFirstInput();
-    } else {
+    } else if (result.error === 'not-found') {
       this.notRegistered.set(identifier.value.trim());
       this.focusModal();
+    } else {
+      this.formError.set(SERVER_DOWN);
     }
   }
 
@@ -178,14 +182,16 @@ export class Login {
     }
 
     this.submitting.set(true);
-    const member = await this.auth.verifyOtp(this.method(), identifier.value, otp.value);
+    const result = await this.auth.verifyOtp(this.method(), identifier.value, otp.value);
     this.submitting.set(false);
 
-    if (member) {
+    if (result.ok) {
       await this.router.navigateByUrl('/dashboard');
-    } else {
+    } else if (result.error === 'wrong-code') {
       this.formError.set('That code is not right. Please try again.');
       otp.reset();
+    } else {
+      this.formError.set(SERVER_DOWN);
     }
   }
 
@@ -213,6 +219,7 @@ export class Login {
         'username-taken': 'That username is already taken. Try another one.',
         'phone-taken': 'An account with that phone number already exists.',
         'email-taken': 'An account with that email already exists.',
+        unavailable: SERVER_DOWN,
       }[result.error],
     );
   }
